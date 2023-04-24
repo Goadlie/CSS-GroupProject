@@ -15,11 +15,29 @@ public class EducationalModel extends JFrame {
     private JButton backButton;
     private JLabel explanationLabel;
     private int questionNumber = 1;
-    private int[] correctAnswerIndices = {0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2};
-    private String[] explanations = new String[15]; // Add explanations for each question
-    private boolean[] isAnswerCorrect = new boolean[15];
+    private int[] correctAnswerIndices = {0, 1}; // add more indices as needed
+    private boolean[] isAnswerCorrect = new boolean[2]; // add more elements as needed
     private boolean isInSummary = false;
     private boolean isInLastExplanation = false;
+    private String[][] questions = {
+        {"Question 1: What is threat modeling?", 
+        "Answer 1", 
+        "Choice 1: The process of identifying potential threats and vulnerabilities from an adversary's point of view, and exploring potential mitigations to these threats.",
+        "Choice 2: The process of creating fake news articles using machine learning algorithms.",
+        "Choice 3: The process of detecting fake news articles created by machines. ",
+        "Choice 4: The process of analyzing patterns in real news articles to identify potential propaganda."},
+        {"Question 2: What is reality vertigo?", 
+        "Answer 2: The phenomenon where computers can generate such convincing content that regular people may have a hard time figuring out what's true anymore.", 
+        "Choice 1: The phenomenon where computers can generate such convincing content that regular people may have a hard time figuring out what's true anymore.",
+        "Choice 2: The phenomenon where people become dizzy when they use virtual reality headsets.",
+        "Choice 3: The phenomenon where people become confused when reading news articles.",
+        "Choice 4: The phenomenon where people have trouble distinguishing between reality and fiction."
+    },
+    
+    
+    };
+    private String[] explanations = {"Explanation 1", "Explanation 2"}; // add more explanations as needed
+
 
     public EducationalModel() {
         setTitle("Multiple Choice Quiz");
@@ -38,51 +56,52 @@ public class EducationalModel extends JFrame {
     private void showQuestion() {
         mainPanel.removeAll();
         questionPanel = new JPanel(new GridLayout(5, 2));
-
-        questionLabel = new JLabel("Question " + questionNumber + ": SUP");
+    
+        String[] currentQuestion = questions[questionNumber - 1];
+        questionLabel = new JLabel(currentQuestion[0]);
         questionLabel.setFont(new Font("Arial", Font.BOLD, 24));
         mainPanel.add(questionLabel, BorderLayout.NORTH);
-
+    
         explanationLabel = null;
-
+    
         choicesGroup = new ButtonGroup();
         choiceButtons = new JRadioButton[4];
         feedbackLabels = new JLabel[4];
-
+    
         for (int i = 0; i < 4; i++) {
-            choiceButtons[i] = new JRadioButton("Choice " + (i + 1));
-            choiceButtons[i].setFont(new Font("Arial", Font.PLAIN, 20));
+            choiceButtons[i] = new JRadioButton(currentQuestion[i + 2]);
+            choiceButtons[i].setFont(new Font("Arial", Font.PLAIN, 18));
             choicesGroup.add(choiceButtons[i]);
             questionPanel.add(choiceButtons[i]);
-
+    
             feedbackLabels[i] = new JLabel("");
-            feedbackLabels[i].setFont(new Font("Arial", Font.PLAIN, 20));
+            feedbackLabels[i].setFont(new Font("Arial", Font.PLAIN, 18));
             questionPanel.add(feedbackLabels[i]);
         }
-
+    
         mainPanel.add(questionPanel, BorderLayout.CENTER);
-
+    
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
+    
         submitButton = new JButton("Submit");
         submitButton.setFont(new Font("Arial", Font.BOLD, 24));
         submitButton.addActionListener(new SubmitButtonListener());
         controlPanel.add(submitButton);
-
+    
         nextButton = new JButton("Next");
         nextButton.setFont(new Font("Arial", Font.BOLD, 24));
         nextButton.addActionListener(new NextButtonListener());
         nextButton.setVisible(false);
         controlPanel.add(nextButton);
-
+    
         backButton = new JButton("Back");
         backButton.setFont(new Font("Arial", Font.BOLD, 24));
         backButton.addActionListener(new BackButtonListener());
         backButton.setEnabled(false);
         controlPanel.add(backButton);
-
+    
         mainPanel.add(controlPanel, BorderLayout.SOUTH);
-
+    
         mainPanel.revalidate();
         mainPanel.repaint();
     }
@@ -113,7 +132,7 @@ public class EducationalModel extends JFrame {
         mainPanel.revalidate();
         mainPanel.repaint();
 
-        if (questionNumber == 15) {
+        if (questionNumber == 10) {
             isInLastExplanation = true;
         } else {
             isInLastExplanation = false;
@@ -127,12 +146,12 @@ public class EducationalModel extends JFrame {
         for (boolean correct : isAnswerCorrect) {
             if (correct) correctAnswers++;
         }
-        double gradePercentage = ((double) correctAnswers / 15) * 100;
+        double gradePercentage = ((double) correctAnswers / 10) * 100;
 
         JPanel summaryPanel = new JPanel();
         summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 10; i++) {
             JLabel resultLabel = new JLabel("Question " + (i + 1) + ": " + (isAnswerCorrect[i] ? "Correct" : "Incorrect"));
             resultLabel.setFont(new Font("Arial", Font.PLAIN, 20));
             summaryPanel.add(resultLabel);
@@ -204,7 +223,7 @@ public class EducationalModel extends JFrame {
                 isInLastExplanation = false;
             } else {
                 questionNumber++;
-                if (questionNumber <= 15) {
+                if (questionNumber <= 10) {
                     showQuestion();
                 } else {
                     showSummary();
@@ -217,7 +236,7 @@ public class EducationalModel extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (isInSummary) {
-                questionNumber = 15;
+                questionNumber = 10;
                 isInSummary = false;
                 showExplanation();
             } else if (explanationLabel != null) {
@@ -233,7 +252,7 @@ public class EducationalModel extends JFrame {
             mainPanel.revalidate();
             mainPanel.repaint();
 
-            if (questionNumber == 15) {
+            if (questionNumber == 10) {
                 nextButton.setVisible(false);
             }
         }
